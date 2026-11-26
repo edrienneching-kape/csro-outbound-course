@@ -28,7 +28,13 @@ html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
 a{color:var(--teal)}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--panel-2);padding:1px 5px;border-radius:4px;color:var(--gold)}
-.app{display:grid;grid-template-columns:230px minmax(0,1fr) 360px;height:100%}
+:root{--navW:230px;--stepsW:360px}
+.app{display:grid;grid-template-columns:var(--navW) 6px minmax(0,1fr) 6px var(--stepsW);height:100%}
+.gutter{background:var(--line);cursor:col-resize;position:relative;user-select:none}
+.gutter:hover,.gutter.on{background:var(--teal)}
+.gutter::after{content:'';position:absolute;left:-4px;right:-4px;top:0;bottom:0}
+.app.resizing{cursor:col-resize;user-select:none}
+.app.resizing .pane{pointer-events:none}
 .pane{overflow-y:auto;min-width:0}
 nav.modules{background:var(--panel);border-right:1px solid var(--line);padding:20px 12px}
 nav .brand{font-family:var(--display);font-size:17px;font-weight:600;padding:4px 10px 14px;color:var(--ink)}
@@ -39,7 +45,7 @@ nav a.m:hover{background:var(--panel-2);color:var(--ink)}
 nav a.m.active{background:var(--panel-2);color:var(--ink)}
 nav .sep{height:1px;background:var(--line);margin:10px 10px}
 main.lesson{padding:28px 40px 80px}
-main .inner{max-width:760px;margin:0 auto}
+main .inner{max-width:900px;margin:0 auto}
 h1{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.15;margin:0 0 6px;text-wrap:balance}
 .byline{color:var(--ink-dim);font-size:13px;margin-bottom:28px}
 section.module{padding:28px 0 8px;border-top:1px solid var(--line);scroll-margin-top:12px}
@@ -87,10 +93,10 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
 .reset:hover{color:var(--ink)}
 .mobile-tabs{display:none}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-@media (max-width:1100px){.app{grid-template-columns:200px minmax(0,1fr) 320px}}
+
 @media (max-width:860px){
   .app{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
-  nav.modules{display:none}
+  nav.modules,.gutter{display:none}
   .mobile-tabs{display:flex;gap:6px;padding:10px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
   .mobile-tabs button{flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-dim);padding:8px;border-radius:8px;font:inherit;font-size:13px}
   .mobile-tabs button.on{color:var(--ink);border-color:var(--teal)}
@@ -127,6 +133,7 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
   <a class="m" href="#guard"><b>·</b>Guardrails</a>
   <a class="m" href="#track"><b>·</b>Progress tracker</a>
 </nav>
+<div class="gutter" id="gL" title="Drag to resize, double-click to reset"></div>
 
 <main class="lesson pane" id="lesson">
 <div class="inner">
@@ -604,6 +611,7 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
 </section>
 </div>
 </main>
+<div class="gutter" id="gR" title="Drag to resize, double-click to reset"></div>
 
 <aside class="steps pane" id="steps" aria-label="Next steps">
 <h2>Next steps</h2>
@@ -711,6 +719,27 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
     });
   });
   setActive();
+
+  // resizable side panes: drag the gutters, double-click to reset; widths remembered in this browser
+  var DEF={navW:230,stepsW:360};
+  var widths={}; try{ widths=JSON.parse(localStorage.getItem(KEY+'-widths')||'{}')||{}; }catch(e){}
+  function setW(k,v){ var min=k==='navW'?160:240, max=Math.max(min, window.innerWidth-640-(k==='navW'?cur('stepsW'):cur('navW'))); v=Math.min(max,Math.max(min,v)); root.style.setProperty('--'+k, v+'px'); widths[k]=v; }
+  function cur(k){ return widths[k]||DEF[k]; }
+  if(widths.navW) root.style.setProperty('--navW',widths.navW+'px');
+  if(widths.stepsW) root.style.setProperty('--stepsW',widths.stepsW+'px');
+  function saveW(){ try{ localStorage.setItem(KEY+'-widths', JSON.stringify(widths)); }catch(e){} }
+  function drag(el,k,sign){
+    el.addEventListener('pointerdown',function(e){
+      e.preventDefault(); el.classList.add('on'); app.classList.add('resizing');
+      var startX=e.clientX, start=cur(k);
+      function mv(ev){ setW(k, start+sign*(ev.clientX-startX)); }
+      function up(){ el.classList.remove('on'); app.classList.remove('resizing'); saveW(); window.removeEventListener('pointermove',mv); window.removeEventListener('pointerup',up); }
+      window.addEventListener('pointermove',mv); window.addEventListener('pointerup',up);
+    });
+    el.addEventListener('dblclick',function(){ delete widths[k]; root.style.setProperty('--'+k, DEF[k]+'px'); saveW(); });
+  }
+  drag(document.getElementById('gL'),'navW',1);
+  drag(document.getElementById('gR'),'stepsW',-1);
 
   // phone: toggle between the two panes
   var app=document.getElementById('app');
