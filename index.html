@@ -7,13 +7,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* CSRO dark system: three-pane workbench — module nav | lesson | checklist, each scrolling on its own */
+  /* CSRO system, three-pane workbench — module nav | lesson | checklist, each scrolling on its own. Light palette first; dark (the CSRO default) overrides below. */
+  --bg:#f6f5f1; --panel:#ecebe5; --panel-2:#e2e1da; --line:#d2d1c9;
+  --ink:#1b211e; --ink-dim:#5b655f; --ink-faint:#8a948e;
+  --teal:#1f8f80; --gold:#a8771d; --rust:#b2512a; --good:#2f8f52;
+  --display:"Fraunces",Georgia,serif; --body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
   --bg:#0f1412; --panel:#161d1a; --panel-2:#1c2521; --line:#2a3631;
   --ink:#e8eae6; --ink-dim:#9aa49c; --ink-faint:#6b756f;
   --teal:#3fb8a6; --gold:#d9a648; --rust:#c9643c; --good:#5cb97a;
-  --display:"Fraunces",Georgia,serif; --body:"Archivo","Helvetica Neue",Arial,sans-serif;
   color-scheme:dark;
 }
+.theme{display:flex;align-items:center;gap:8px;margin:14px 10px 4px;font-size:12.5px;color:var(--ink-dim)}
+.theme button{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+.theme button:hover{border-color:var(--teal)}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
@@ -45,8 +54,11 @@ li{margin:0 0 6px}
 table{border-collapse:collapse;width:100%;margin:8px 0 16px;font-size:13.5px}
 th,td{text-align:left;vertical-align:top;padding:7px 9px;border-bottom:1px solid var(--line)}
 th{color:var(--ink-dim);font-weight:500;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
-td:first-child{color:var(--ink);font-weight:500;white-space:nowrap}
+td:first-child{color:var(--ink);font-weight:500}
 .tbl{overflow-x:auto}
+table.wrap{table-layout:fixed}
+table.wrap th:nth-child(1){width:34%}
+table.wrap th:nth-child(2){width:28%}
 blockquote{margin:8px 0 14px;padding:10px 14px;background:var(--panel-2);border-radius:8px;color:var(--ink);font-style:normal;border-left:3px solid var(--teal)}
 .done{margin:16px 0 4px;padding:10px 14px;border:1px dashed var(--line);border-radius:8px;color:var(--ink-dim);font-size:13.5px}
 .done b{color:var(--good);font-weight:600}
@@ -92,10 +104,11 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
 </head>
 <body>
 <div class="app" id="app">
-<div class="mobile-tabs"><button class="on" id="tabLesson">Course</button><button id="tabSteps">Next steps</button></div>
+<div class="mobile-tabs"><button class="on" id="tabLesson">Course</button><button id="tabSteps">Next steps</button><button id="themeBtnM" type="button">Theme</button></div>
 
 <nav class="modules pane" aria-label="Modules">
   <div class="brand">Outbound AI Agents<small>CSRO learning course</small></div>
+  <div class="theme"><button id="themeBtn" type="button">Switch to light mode</button></div>
   <a class="m" href="#how"><b>·</b>How this works</a>
   <a class="m" href="#roles"><b>·</b>Roles and handover</a>
   <a class="m" href="#aria"><b>·</b>What we reuse from ARIA</a>
@@ -157,7 +170,7 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
 <li>ARIA blocks XV PreSale tickets today (unmapped brand), and its core is bundled per brand app, so every change is a repackage and upload. Our yaml-per-use-case design exists to avoid exactly that.</li>
 </ul>
 <h3>What we take</h3>
-<div class="tbl"><table>
+<div class="tbl"><table class="wrap">
 <tr><th>From ARIA</th><th>Where it lands in this course</th><th>How</th></tr>
 <tr><td>Aria Resource sheets per brand: AI Response Rules, Plans &amp; Pricing, article summaries, Process Library</td><td>Module 3 <code>brain.py</code> and Module 3b "approved answers"</td><td>Read-only. Ask Gena for a Viewer service account of our own (ARIA's own key is bundled with editor rights, a known risk; we must not copy that pattern)</td></tr>
 <tr><td>Aria Announcements sheet: ongoing issues with AI instructions, including streaming</td><td>Module 6 trigger</td><td>A resolved streaming issue in Announcements can fire the outreach as well as, or instead of, the <code>streaming_fixed</code> tag. Decide with Alex Goldby's team and Gena which is the source of truth</td></tr>
@@ -216,24 +229,24 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
 </ol>
 <figure>
 <svg viewBox="0 0 760 332" role="img" aria-label="A human sits between the draft and the send" font-size="13" font-family="Archivo, Arial, sans-serif">
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b756f"/></marker></defs>
-<text x="24" y="34" font-size="15" font-weight="600" fill="#e8eae6">A human sits between the draft and the send</text>
-<g fill="none" stroke="#6b756f" stroke-width="1.25">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink-faint)"/></marker></defs>
+<text x="24" y="34" font-size="15" font-weight="600" fill="var(--ink)">A human sits between the draft and the send</text>
+<g fill="none" stroke="var(--ink-faint)" stroke-width="1.25">
 <path d="M175 100H205" marker-end="url(#arr)"/><path d="M355 100H385" marker-end="url(#arr)"/><path d="M535 100H565" marker-end="url(#arr)"/>
 <path d="M640 128V156H100V196" marker-end="url(#arr)"/>
 <path d="M180 236H205" marker-end="url(#arr)"/><path d="M355 236H385" marker-end="url(#arr)"/>
 <path d="M100 276V300H460V264" marker-end="url(#arr)"/>
 </g>
-<g><rect x="25" y="72" width="150" height="56" rx="8" fill="none" stroke="#6b756f" stroke-width="1.25"/><text x="100" y="96" text-anchor="middle" font-weight="600" fill="#e8eae6">1 Trigger</text><text x="100" y="114" text-anchor="middle" font-size="11.5" fill="#9aa49c">schedule or webhook</text></g>
-<g><rect x="205" y="72" width="150" height="56" rx="8" fill="none" stroke="#6b756f" stroke-width="1.25"/><text x="280" y="96" text-anchor="middle" font-weight="600" fill="#e8eae6">2 Data</text><text x="280" y="114" text-anchor="middle" font-size="11.5" fill="#9aa49c">Zendesk or a list</text></g>
-<g><rect x="385" y="72" width="150" height="56" rx="8" fill="none" stroke="#6b756f" stroke-width="1.25"/><text x="460" y="96" text-anchor="middle" font-weight="600" fill="#e8eae6">3 Rules</text><text x="460" y="114" text-anchor="middle" font-size="11.5" fill="#9aa49c">in or out, by rule</text></g>
-<g><rect x="565" y="72" width="150" height="56" rx="8" fill="none" stroke="#6b756f" stroke-width="1.25"/><text x="640" y="96" text-anchor="middle" font-weight="600" fill="#e8eae6">4 Brain</text><text x="640" y="114" text-anchor="middle" font-size="11.5" fill="#9aa49c">Claude writes a draft</text></g>
-<g><polygon points="20,236 100,196 180,236 100,276" fill="#3fb8a6" fill-opacity="0.14" stroke="#3fb8a6" stroke-width="2"/><text x="100" y="234" text-anchor="middle" font-weight="600" fill="#e8eae6">5 Approval gate</text><text x="100" y="250" text-anchor="middle" font-size="11.5" fill="#9aa49c">human says yes?</text></g>
-<g><rect x="205" y="208" width="150" height="56" rx="8" fill="none" stroke="#6b756f" stroke-width="1.25"/><text x="280" y="232" text-anchor="middle" font-weight="600" fill="#e8eae6">6 Send</text><text x="280" y="250" text-anchor="middle" font-size="11.5" fill="#9aa49c">public reply</text></g>
-<g><rect x="385" y="208" width="150" height="56" rx="8" fill="none" stroke="#6b756f" stroke-width="1.25"/><text x="460" y="232" text-anchor="middle" font-weight="600" fill="#e8eae6">7 Log</text><text x="460" y="250" text-anchor="middle" font-size="11.5" fill="#9aa49c">counts for the KPIs</text></g>
-<text x="370" y="148" text-anchor="middle" font-size="11.5" fill="#9aa49c">draft lands as an internal note</text>
-<text x="192" y="226" text-anchor="middle" font-size="11.5" fill="#9aa49c">approved</text>
-<text x="280" y="292" text-anchor="middle" font-size="11.5" fill="#9aa49c">rejected, logged with a reason</text>
+<g><rect x="25" y="72" width="150" height="56" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.25"/><text x="100" y="96" text-anchor="middle" font-weight="600" fill="var(--ink)">1 Trigger</text><text x="100" y="114" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">schedule or webhook</text></g>
+<g><rect x="205" y="72" width="150" height="56" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.25"/><text x="280" y="96" text-anchor="middle" font-weight="600" fill="var(--ink)">2 Data</text><text x="280" y="114" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">Zendesk or a list</text></g>
+<g><rect x="385" y="72" width="150" height="56" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.25"/><text x="460" y="96" text-anchor="middle" font-weight="600" fill="var(--ink)">3 Rules</text><text x="460" y="114" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">in or out, by rule</text></g>
+<g><rect x="565" y="72" width="150" height="56" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.25"/><text x="640" y="96" text-anchor="middle" font-weight="600" fill="var(--ink)">4 Brain</text><text x="640" y="114" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">Claude writes a draft</text></g>
+<g><polygon points="20,236 100,196 180,236 100,276" fill="var(--teal)" fill-opacity="0.14" stroke="var(--teal)" stroke-width="2"/><text x="100" y="234" text-anchor="middle" font-weight="600" fill="var(--ink)">5 Approval gate</text><text x="100" y="250" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">human says yes?</text></g>
+<g><rect x="205" y="208" width="150" height="56" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.25"/><text x="280" y="232" text-anchor="middle" font-weight="600" fill="var(--ink)">6 Send</text><text x="280" y="250" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">public reply</text></g>
+<g><rect x="385" y="208" width="150" height="56" rx="8" fill="none" stroke="var(--ink-faint)" stroke-width="1.25"/><text x="460" y="232" text-anchor="middle" font-weight="600" fill="var(--ink)">7 Log</text><text x="460" y="250" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">counts for the KPIs</text></g>
+<text x="370" y="148" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">draft lands as an internal note</text>
+<text x="192" y="226" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">approved</text>
+<text x="280" y="292" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">rejected, logged with a reason</text>
 </svg>
 <figcaption>Pieces 1 to 4 decide who and what; piece 5 is a person; pieces 6 and 7 only happen after the yes. When the customer replies, an eighth piece, the reply handler (Module 3b), runs pieces 3 to 7 again on the reply or escalates to a human.</figcaption>
 </figure>
@@ -668,6 +681,14 @@ select{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);b
     document.getElementById('progBar').style.width=(steps.length?Math.round(done/steps.length*100):0)+'%';
   }
   progress();
+  // theme: CSRO dark by default; the viewer's choice is remembered in this browser
+  var root=document.documentElement;
+  function applyTheme(t){ root.setAttribute('data-theme',t); var b=document.getElementById('themeBtn'); if(b) b.textContent=(t==='dark'?'Switch to light mode':'Switch to dark mode'); }
+  var saved=null; try{ saved=localStorage.getItem(KEY+'-theme'); }catch(e){}
+  applyTheme(saved==='light'?'light':'dark');
+  function flip(){ var t=root.getAttribute('data-theme')==='dark'?'light':'dark'; applyTheme(t); try{ localStorage.setItem(KEY+'-theme',t); }catch(e){} }
+  document.getElementById('themeBtn').addEventListener('click',flip);
+  var tm=document.getElementById('themeBtnM'); if(tm) tm.addEventListener('click',flip);
   document.getElementById('reset').addEventListener('click',function(){
     state={}; save(); location.reload();
   });
